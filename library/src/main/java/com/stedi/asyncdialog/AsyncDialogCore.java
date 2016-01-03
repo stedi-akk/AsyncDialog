@@ -18,6 +18,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     private Bundle args;
 
     private boolean fromFragment;
+    private boolean allowStateLoss;
 
     protected abstract Result doInBackground() throws Exception;
 
@@ -56,6 +57,10 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     @Override
     public int show(FragmentTransaction transaction, String tag) {
         throw new RuntimeException("Use execute() to show dialog");
+    }
+
+    public void setAllowStateLoss(boolean allowStateLoss) {
+        this.allowStateLoss = allowStateLoss;
     }
 
     public void execute(Fragment fragment) {
@@ -129,13 +134,16 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
                     else
                         Log.e(LOG_TAG, "Target activity not found");
                 }
-                dismiss();
+                if (allowStateLoss)
+                    dismissAllowingStateLoss();
+                else
+                    dismiss();
             }
         });
     }
 
     private void postOnAfterExecute(Runnable runnable) {
-        if (isResumed())
+        if (isResumed() || allowStateLoss)
             uiHandler.post(runnable);
         else
             pendingOnAfterExecute = runnable;

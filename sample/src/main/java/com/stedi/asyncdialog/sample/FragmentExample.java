@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.stedi.asyncdialog.AsyncDialogCore;
 import com.stedi.asyncdialog.ProgressAsyncDialog;
@@ -37,6 +38,7 @@ public class FragmentExample extends Fragment implements View.OnClickListener, A
 
     @Override
     public void onResult(Exception exception, String s, Bundle args) {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
         textView.setText(s);
     }
 }
