@@ -27,13 +27,19 @@ public class FragmentExample extends Fragment implements View.OnClickListener, A
     @Override
     public void onClick(View v) {
         textView.setText("");
-        new ProgressAsyncDialog<String>() {
+        ProgressAsyncDialog dlg = new ProgressAsyncDialog<String>() {
             @Override
             protected String doInBackground() throws Exception {
-                Thread.sleep(5000);
+                for (int i = 0; i < 100; i++) {
+                    Thread.sleep(100);
+                    if (isDismissed())
+                        return null;
+                }
                 return "work done !";
             }
-        }.execute(this);
+        };
+        dlg.setAllowStateLoss(true);
+        dlg.execute(this);
     }
 
     @Override

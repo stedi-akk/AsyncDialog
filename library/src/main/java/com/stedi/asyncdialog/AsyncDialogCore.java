@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,12 +14,14 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     private static final String LOG_TAG = "AsyncDialog";
     private static final String DEFAULT_TAG = AsyncDialogCore.class.getName();
 
+    private Thread backgroundThread;
     private Handler uiHandler;
     private Runnable pendingOnAfterExecute;
     private Bundle args;
 
     private boolean fromFragment;
     private boolean allowStateLoss;
+    private boolean isDismissed;
 
     protected abstract Result doInBackground() throws Exception;
 
@@ -50,6 +53,12 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        isDismissed = true;
+    }
+
+    @Override
     public void show(FragmentManager manager, String tag) {
         throw new RuntimeException("Use execute() to show dialog");
     }
@@ -57,6 +66,14 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     @Override
     public int show(FragmentTransaction transaction, String tag) {
         throw new RuntimeException("Use execute() to show dialog");
+    }
+
+    public Thread getBackgroundThread() {
+        return backgroundThread;
+    }
+
+    public boolean isDismissed() {
+        return isDismissed;
     }
 
     public void setAllowStateLoss(boolean allowStateLoss) {
@@ -101,7 +118,8 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     private void executeWith(FragmentManager manager, Bundle args, String tag) {
         this.args = args;
         super.show(manager, tag);
-        new Thread(this).start();
+        backgroundThread = new Thread(this);
+        backgroundThread.start();
     }
 
     @Override
@@ -121,18 +139,20 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
             @SuppressWarnings("unchecked")
             @Override
             public void run() {
+                if (isDismissed())
+                    return;
                 if (fromFragment) {
                     Fragment fragment = getTargetFragment();
                     if (fragment != null && fragment instanceof OnResult)
                         ((OnResult<Result>) fragment).onResult(exception, result, args);
                     else
-                        Log.e(LOG_TAG, "Target fragment not found");
+                        Log.e(LOG_TAG, "onResult failed: Target fragment not found");
                 } else {
                     Activity activity = getActivity();
                     if (activity != null && activity instanceof OnResult)
                         ((OnResult<Result>) activity).onResult(exception, result, args);
                     else
-                        Log.e(LOG_TAG, "Target activity not found");
+                        Log.e(LOG_TAG, "onResult failed: Target activity not found");
                 }
                 if (allowStateLoss)
                     dismissAllowingStateLoss();
