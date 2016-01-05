@@ -19,8 +19,8 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     private Runnable pendingOnAfterExecute;
     private Bundle args;
 
-    private boolean fromFragment;
-    private boolean allowStateLoss;
+    private boolean isFromFragment;
+    private boolean isAllowStateLoss;
     private boolean isDismissed;
 
     protected abstract Result doInBackground() throws Exception;
@@ -72,12 +72,8 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
         return backgroundThread;
     }
 
-    public boolean isDismissed() {
-        return isDismissed;
-    }
-
-    public void setAllowStateLoss(boolean allowStateLoss) {
-        this.allowStateLoss = allowStateLoss;
+    public void setAllowStateLoss(boolean isAllowStateLoss) {
+        this.isAllowStateLoss = isAllowStateLoss;
     }
 
     public void execute(Fragment fragment) {
@@ -93,7 +89,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     }
 
     public void execute(Fragment fragment, Bundle args, String tag) {
-        fromFragment = true;
+        isFromFragment = true;
         setTargetFragment(fragment, 0);
         executeWith(fragment.getFragmentManager(), args, tag);
     }
@@ -111,7 +107,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     }
 
     public void execute(Activity activity, Bundle args, String tag) {
-        fromFragment = false;
+        isFromFragment = false;
         executeWith(activity.getFragmentManager(), args, tag);
     }
 
@@ -139,9 +135,9 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
             @SuppressWarnings("unchecked")
             @Override
             public void run() {
-                if (isDismissed())
+                if (isDismissed)
                     return;
-                if (fromFragment) {
+                if (isFromFragment) {
                     Fragment fragment = getTargetFragment();
                     if (fragment != null && fragment instanceof OnResult)
                         ((OnResult<Result>) fragment).onResult(exception, result, args);
@@ -154,7 +150,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
                     else
                         Log.e(LOG_TAG, "onResult failed: Target activity not found");
                 }
-                if (allowStateLoss)
+                if (isAllowStateLoss)
                     dismissAllowingStateLoss();
                 else
                     dismiss();
@@ -163,7 +159,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     }
 
     private void postOnAfterExecute(Runnable runnable) {
-        if (isResumed() || allowStateLoss)
+        if (isResumed() || isAllowStateLoss)
             uiHandler.post(runnable);
         else
             pendingOnAfterExecute = runnable;

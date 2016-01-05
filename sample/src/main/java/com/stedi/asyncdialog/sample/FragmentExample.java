@@ -1,6 +1,7 @@
 package com.stedi.asyncdialog.sample;
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -28,14 +29,22 @@ public class FragmentExample extends Fragment implements View.OnClickListener, A
     public void onClick(View v) {
         textView.setText("");
         ProgressAsyncDialog dlg = new ProgressAsyncDialog<String>() {
+            private volatile boolean isDismissed;
+
             @Override
             protected String doInBackground() throws Exception {
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 50; i++) {
                     Thread.sleep(100);
-                    if (isDismissed())
+                    if (isDismissed)
                         return null;
                 }
                 return "work done !";
+            }
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                super.onDismiss(dialog);
+                isDismissed = true;
             }
         };
         dlg.setAllowStateLoss(true);

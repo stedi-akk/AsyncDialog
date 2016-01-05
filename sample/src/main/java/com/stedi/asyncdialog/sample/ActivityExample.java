@@ -1,5 +1,6 @@
 package com.stedi.asyncdialog.sample;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,8 +27,20 @@ public class ActivityExample extends AppCompatActivity implements View.OnClickLi
         ProgressAsyncDialog dlg = new ProgressAsyncDialog<String>() {
             @Override
             protected String doInBackground() throws Exception {
-                Thread.sleep(5000);
+                for (int i = 0; i < 50; i++) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        return null;
+                    }
+                }
                 return "work done !";
+            }
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                super.onDismiss(dialog);
+                getBackgroundThread().interrupt();
             }
         };
         dlg.setAllowStateLoss(true);
