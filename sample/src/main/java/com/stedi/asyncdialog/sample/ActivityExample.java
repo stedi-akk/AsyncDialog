@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.stedi.asyncdialog.AsyncDialogCore;
-import com.stedi.asyncdialog.ProgressAsyncDialog;
 
 public class ActivityExample extends AppCompatActivity implements View.OnClickListener, AsyncDialogCore.OnResult<String> {
     private TextView textView;
@@ -24,7 +23,7 @@ public class ActivityExample extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         textView.setText("");
-        ProgressAsyncDialog dlg = new ProgressAsyncDialog<String>() {
+        MyProgressDialog dlg = new MyProgressDialog<String>() {
             @Override
             protected String doInBackground() throws Exception {
                 for (int i = 0; i < 50; i++) {

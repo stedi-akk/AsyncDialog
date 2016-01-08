@@ -1,10 +1,12 @@
-package com.stedi.asyncdialog;
+package com.stedi.asyncdialog.sample;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
-public abstract class ProgressAsyncDialog<T> extends AsyncDialogCore<T> {
+import com.stedi.asyncdialog.AsyncDialogCore;
+
+public abstract class MyProgressDialog<T> extends AsyncDialogCore<T> {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         ProgressDialog dialog = new ProgressDialog(getActivity());

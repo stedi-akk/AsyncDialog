@@ -2,4 +2,5 @@
     <string name="app_name">Async Dialog Sample</string>
     <string name="start_from_activity">Start from activity</string>
     <string name="start_from_fragment">Start from fragment</string>
+    <string name="please_wait">Please wait…</string>
 </resources>

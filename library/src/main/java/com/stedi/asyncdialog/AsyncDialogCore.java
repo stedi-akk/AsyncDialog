@@ -10,6 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+/**
+ * Dialog that manages operations in the background,
+ * and then returns the result of this operation to a fragment or activity.
+ *
+ * @param <Result> that the background operation must return.
+ */
 public abstract class AsyncDialogCore<Result> extends DialogFragment implements Runnable {
     private static final String LOG_TAG = "AsyncDialog";
     private static final String DEFAULT_TAG = AsyncDialogCore.class.getName();
@@ -26,6 +32,13 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
     protected abstract Result doInBackground() throws Exception;
 
     public interface OnResult<Result> {
+        /**
+         * Called when background operation is finished, and dialog is not yet dismissed.
+         *
+         * @param exception from {@link #doInBackground()} if any.
+         * @param result    from {@link #doInBackground()}.
+         * @param args      from  execute() with args.
+         */
         void onResult(Exception exception, Result result, Bundle args);
     }
 
@@ -68,44 +81,81 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
         throw new RuntimeException("Use execute() to show dialog");
     }
 
-    public Thread getBackgroundThread() {
-        return backgroundThread;
-    }
-
+    /**
+     * By default, if dialog is not in resumed state, result from {@link #doInBackground()}
+     * will be passed to {@link OnResult#onResult(Exception, Object, android.os.Bundle)}
+     * only when dialog will be visible again (onResult() called).
+     * <p/>
+     * If set to true, result from {@link #doInBackground()}
+     * will be always passed to {@link OnResult#onResult(Exception, Object, android.os.Bundle)}
+     * immediately, even if dialog is not in resumed state.
+     * In this case, {@link #dismissAllowingStateLoss()} will be used to dismiss dialog.
+     */
     public void setAllowStateLoss(boolean isAllowStateLoss) {
         this.isAllowStateLoss = isAllowStateLoss;
     }
 
+    /**
+     * Returns {@link #doInBackground()} thread.
+     */
+    public Thread getBackgroundThread() {
+        return backgroundThread;
+    }
+
+    /**
+     * Execute dialog from fragment.
+     */
     public void execute(Fragment fragment) {
         execute(fragment, null, DEFAULT_TAG);
     }
 
+    /**
+     * Execute dialog from fragment, with args.
+     */
     public void execute(Fragment fragment, Bundle args) {
         execute(fragment, args, DEFAULT_TAG);
     }
 
+    /**
+     * Execute dialog from fragment, with custom tag for this dialog.
+     */
     public void execute(Fragment fragment, String tag) {
         execute(fragment, null, tag);
     }
 
+    /**
+     * Execute dialog from fragment, with args and custom tag for this dialog.
+     */
     public void execute(Fragment fragment, Bundle args, String tag) {
         isFromFragment = true;
         setTargetFragment(fragment, 0);
         executeWith(fragment.getFragmentManager(), args, tag);
     }
 
+    /**
+     * Execute dialog from activity.
+     */
     public void execute(Activity activity) {
         execute(activity, null, DEFAULT_TAG);
     }
 
+    /**
+     * Execute dialog from activity, with args.
+     */
     public void execute(Activity activity, Bundle args) {
         execute(activity, args, DEFAULT_TAG);
     }
 
+    /**
+     * Execute dialog from activity, with custom tag for this dialog.
+     */
     public void execute(Activity activity, String tag) {
         execute(activity, null, tag);
     }
 
+    /**
+     * Execute dialog from activity, with args and custom tag for this dialog.
+     */
     public void execute(Activity activity, Bundle args, String tag) {
         isFromFragment = false;
         executeWith(activity.getFragmentManager(), args, tag);
@@ -137,6 +187,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
             public void run() {
                 if (isDismissed)
                     return;
+
                 if (isFromFragment) {
                     Fragment fragment = getTargetFragment();
                     if (fragment != null && fragment instanceof OnResult)
@@ -150,6 +201,7 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
                     else
                         Log.e(LOG_TAG, "onResult failed: Target activity not found");
                 }
+
                 if (isAllowStateLoss)
                     dismissAllowingStateLoss();
                 else

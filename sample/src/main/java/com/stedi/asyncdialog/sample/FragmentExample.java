@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.stedi.asyncdialog.AsyncDialogCore;
-import com.stedi.asyncdialog.ProgressAsyncDialog;
 
 public class FragmentExample extends Fragment implements View.OnClickListener, AsyncDialogCore.OnResult<String> {
     private TextView textView;
@@ -28,7 +27,7 @@ public class FragmentExample extends Fragment implements View.OnClickListener, A
     @Override
     public void onClick(View v) {
         textView.setText("");
-        ProgressAsyncDialog dlg = new ProgressAsyncDialog<String>() {
+        MyProgressDialog dlg = new MyProgressDialog<String>() {
             private volatile boolean isDismissed;
 
             @Override
