@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="FROM ACTIVITY"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/activity_btn_show_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp"
+        android:text="@string/show_fragment" />
+
+    <FrameLayout
+        android:id="@+id/activity_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:padding="16dp"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/activity_example_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:text="@string/start_from_activity" />
-
-        <TextView
-            android:id="@+id/activity_example_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <View
-        android:background="@android:color/black"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
-
-    <fragment
-        android:tag="FragmentExample"
-        class="com.stedi.asyncdialog.sample.FragmentExample"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="0dp" />
-
-</LinearLayout>
+</FrameLayout>

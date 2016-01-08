@@ -12,9 +12,9 @@ public abstract class MyProgressDialog<T> extends AsyncDialogCore<T> {
         ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage(getString(R.string.please_wait));
         dialog.setIndeterminate(true);
-//        dialog.setCancelable(false);
-//        dialog.setCanceledOnTouchOutside(false);
-//        setCancelable(false);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        setCancelable(false);
         return dialog;
     }
 }

@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:padding="16dp"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/fragment_example_button"
-        android:layout_width="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_height="wrap_content"
-        android:text="@string/start_from_fragment" />
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <TextView
-        android:id="@+id/fragment_example_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="FROM FRAGMENT"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/fragment_btn_close_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp"
+        android:text="@string/close_fragment" />
+
+</FrameLayout>

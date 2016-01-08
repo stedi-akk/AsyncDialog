@@ -83,12 +83,10 @@ public abstract class AsyncDialogCore<Result> extends DialogFragment implements 
 
     /**
      * By default, if dialog is not in resumed state, result from {@link #doInBackground()}
-     * will be passed to {@link OnResult#onResult(Exception, Object, android.os.Bundle)}
-     * only when dialog will be visible again (onResult() called).
+     * will be passed to OnResult.onResult() only when dialog will be visible again.
      * <p/>
      * If set to true, result from {@link #doInBackground()}
-     * will be always passed to {@link OnResult#onResult(Exception, Object, android.os.Bundle)}
-     * immediately, even if dialog is not in resumed state.
+     * will be always passed to OnResult.onResult() immediately, even if dialog is not in resumed state.
      * In this case, {@link #dismissAllowingStateLoss()} will be used to dismiss dialog.
      */
     public void setAllowStateLoss(boolean isAllowStateLoss) {

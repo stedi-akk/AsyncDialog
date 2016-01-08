@@ -1,54 +1,38 @@
 package com.stedi.asyncdialog.sample;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.stedi.asyncdialog.AsyncDialogCore;
 
 public class ActivityExample extends AppCompatActivity implements View.OnClickListener, AsyncDialogCore.OnResult<String> {
-    private TextView textView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
-        findViewById(R.id.activity_example_button).setOnClickListener(this);
-        textView = (TextView) findViewById(R.id.activity_example_text_view);
+        findViewById(R.id.activity_btn_show_fragment).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        textView.setText("");
-        MyProgressDialog dlg = new MyProgressDialog<String>() {
+        new MyProgressDialog<String>() {
             @Override
             protected String doInBackground() throws Exception {
-                for (int i = 0; i < 50; i++) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        return null;
-                    }
-                }
-                return "work done !";
+                Thread.sleep(2000); // some work here
+                return "qwerty";
             }
-
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                super.onDismiss(dialog);
-                getBackgroundThread().interrupt();
-            }
-        };
-        dlg.setAllowStateLoss(true);
-        dlg.execute(this);
+        }.execute(this);
     }
 
     @Override
     public void onResult(Exception exception, String s, Bundle args) {
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
-        textView.setText(s);
+        Toast.makeText(this, "Result: " + s, Toast.LENGTH_LONG).show();
+
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.activity_fragment_container, new FragmentExample(), FragmentExample.class.getName())
+                .commit();
     }
 }
