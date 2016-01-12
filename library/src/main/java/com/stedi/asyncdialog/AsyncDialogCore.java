@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 
 /**
- * Dialog that manages operations in the background,
+ * Dialog that handles operations in background,
  * and then returns the result of this operation to a fragment or activity.
  *
  * @param <Result> that the background operation must return.
