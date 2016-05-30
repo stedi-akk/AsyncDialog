@@ -6,6 +6,7 @@ Dialog that handles operations in background, and then returns the result of thi
 To understand usage, see sample.
 
 ## TODO
+ * Release it...
  * Common dialogs
  * Support down to API 10
  * More samples
